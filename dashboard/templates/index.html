@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match Data Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-5">Match Data Dashboard</h1>
+        <input type="text" id="championSearch" placeholder="Search champions...">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <!-- <th>Match ID</th> -->
+                    <th>Date and Time</th>
+                    <th>Gold Lead at 15 Minutes</th>
+                    <th>Final Build</th>
+                    <th>Build Order</th>
+                    <th>Runes</th>
+                    <th>Own Champions</th>
+                    <th>Enemy Champions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in match_data %}
+                <tr class="matchRow">
+                    <!-- <td>{{ match.match_id }}</td> -->
+                    <td>{{ match.date_and_time }}</td>
+                    <td>{{ match.gold_lead_15 }}</td>
+                    <td>
+                        {% for item in match.final_build %}
+                            <img src="{{ item[1] }}" alt="{{ item[0] }}" title="{{ item[0] }}" width="30" height="30">
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#buildOrderModal{{ match.match_id }}">
+                            View Build Order
+                        </button>
+                        <div class="modal fade" id="buildOrderModal{{ match.match_id }}" tabindex="-1" role="dialog" aria-labelledby="buildOrderModalLabel{{ match.match_id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content" style="background-color: #F5F5F5;">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="buildOrderModalLabel{{ match.match_id }}">Build Order for Match {{ match.match_id }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="font-weight-bold">Time</span>
+                                            <span class="font-weight-bold">Items</span>
+                                        </div>
+                                        {% for build in match.build_order %}
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span>{{ build[0] }} min</span>
+                                                <div class="d-flex">
+                                                    {% for item in build[1] %}
+                                                        <img src="{{ item[1] }}" alt="{{ item[0] }}" title="{{ item[0] }}" width="30" height="30" class="mr-2">
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ match.runes }}</td>
+                    <td class="ownChampsColumn">
+                        {% for champ in match.own_champs %}
+                            <img src="{{ champ.icon_url }}" alt="{{ champ.name }}" title="{{ champ.name }}" width="30" height="30" class="championName">
+                        {% endfor %}
+                    </td>
+                    <td class="enemyChampsColumn">
+                        {% for champ in match.enemy_champs %}
+                            <img src="{{ champ.icon_url }}" alt="{{ champ.name }}" title="{{ champ.name }}" width="30" height="30" class="championName">
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+$(document).ready(function() {
+  $("#championSearch").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".matchRow").hide().filter(function() {
+      var ownChamps = $(this).find(".ownChampsColumn img").filter(function() {
+        return $(this).attr("title").toLowerCase().indexOf(value) > -1;
+      }).length > 0;
+      
+      var enemyChamps = $(this).find(".enemyChampsColumn img").filter(function() {
+        return $(this).attr("title").toLowerCase().indexOf(value) > -1;
+      }).length > 0;
+
+      return (ownChamps || enemyChamps);
+    }).show();
+  });
+});
+    </script>
+</body>
+</html>
