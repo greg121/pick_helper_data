@@ -19,6 +19,7 @@
                     <th>Runes</th>
                     <th>Own Champions</th>
                     <th>Enemy Champions</th>
+                    <th>Analyze Match</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,31 +80,53 @@
                             <img src="{{ champ.icon_url }}" alt="{{ champ.name }}" title="{{ champ.name }}" width="30" height="30" class="championName">
                         {% endfor %}
                     </td>
-                </tr>
+                    <td>
+                        <button class="analyze-btn" data-match-id="{{ match.match_id }}">Analyze</button>
+                    </td>
+                    
+                </tr>                
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-$(document).ready(function() {
-  $("#championSearch").on("keyup", function() {
-    var value = $(this).val().toLowerCase();
-    $(".matchRow").hide().filter(function() {
-      var ownChamps = $(this).find(".ownChampsColumn img").filter(function() {
-        return $(this).attr("title").toLowerCase().indexOf(value) > -1;
-      }).length > 0;
-      
-      var enemyChamps = $(this).find(".enemyChampsColumn img").filter(function() {
-        return $(this).attr("title").toLowerCase().indexOf(value) > -1;
-      }).length > 0;
+    $(document).ready(function() {
+        $("#championSearch").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".matchRow").hide().filter(function() {
+            var ownChamps = $(this).find(".ownChampsColumn img").filter(function() {
+                return $(this).attr("title").toLowerCase().indexOf(value) > -1;
+            }).length > 0;
+            
+            var enemyChamps = $(this).find(".enemyChampsColumn img").filter(function() {
+                return $(this).attr("title").toLowerCase().indexOf(value) > -1;
+            }).length > 0;
 
-      return (ownChamps || enemyChamps);
-    }).show();
-  });
-});
+            return (ownChamps || enemyChamps);
+            }).show();
+        });
+
+        $('.analyze-btn').click(function() {
+            var matchId = $(this).data('match-id');
+            console.log(matchId)
+            $.ajax({
+            url: '/analyze',
+            method: 'POST',
+            data: {'match_id': matchId},
+            success: function(response) {
+                // handle success response from backend
+                $('#myModal').modal('show'); // open the modal
+                $('.modal-body').html(response); // show the returned data in the modal body
+            },
+            error: function(xhr) {
+                // handle error response from backend
+            }
+            });
+        });
+    });
     </script>
 </body>
 </html>

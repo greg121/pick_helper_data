@@ -46,7 +46,7 @@ def main():
         elif e.response.status_code == 404:
             print('Summoner not found.')
         else:
-            print(f'An error occurred: {e.response.text}')
+            print(f'An error occurred: {e.response.status_code}')
 
 if __name__ == "__main__":
     main()
