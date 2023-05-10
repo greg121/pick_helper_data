@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import json
 import os
+import git
 
 app = Flask(__name__)
 
@@ -11,5 +12,18 @@ def index():
         match_data = json.load(f)
     return render_template('index.html', match_data=match_data)
 
+@app.route('/update_server', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        repo = git.Repo('path/to/git_repo')
+        origin = repo.remotes.origin
+        origin.pull()
+        return 'Updated PythonAnywhere successfully', 200
+    else:
+        return 'Wrong event type', 400
+    
+
+#TEST
+        
 if __name__ == '__main__':
     app.run(debug=True)
