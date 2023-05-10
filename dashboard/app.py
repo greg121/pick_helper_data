@@ -12,10 +12,10 @@ def index():
         match_data = json.load(f)
     return render_template('index.html', match_data=match_data)
 
-@app.route('/update_server', methods=['POST'])
+@app.route('/update', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo = git.Repo(os.path.join(os.path.dirname(os.getcwd())))
+        repo = git.Repo('/home/greg121/lol_pick_helper')
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
