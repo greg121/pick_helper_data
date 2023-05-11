@@ -28,7 +28,7 @@ def is_valid_signature(x_hub_signature, data, private_key):
 @app.route('/update', methods=['POST'])
 def webhook():
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.path.dirname(os.getcwd()), 'data_collector', 'data', 'config.ini'))
+    config.read(os.path.join(os.path.dirname(os.getcwd()), 'data_collector', 'config.ini'))
     w_secret = config.get('Github', 'secret')
     if request.method == 'POST':
         x_hub_signature = request.headers.get('X-Hub-Signature')
