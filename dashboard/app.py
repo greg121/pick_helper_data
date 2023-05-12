@@ -29,7 +29,7 @@ def is_valid_signature(x_hub_signature, data, private_key):
 def webhook():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.path.dirname(os.getcwd()), 'data_collector', 'config.ini'))
-    w_secret = config.get('Github', 'secret')
+    w_secret = config.get('General', 'secret')
     if request.method == 'POST':
         x_hub_signature = request.headers.get('X-Hub-Signature')
         if not is_valid_signature(x_hub_signature, request.data, w_secret):
