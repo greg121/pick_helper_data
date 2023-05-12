@@ -32,7 +32,7 @@ def webhook():
     w_secret = config.get('General', 'secret')
     if request.method == 'POST':
         x_hub_signature = request.headers.get('X-Hub-Signature')
-        if not is_valid_signature(x_hub_signature, request.data, w_secret):
+        if is_valid_signature(x_hub_signature, request.data, w_secret):
             repo = git.Repo('/home/greg121/lol_pick_helper')
             origin = repo.remotes.origin
             origin.pull()
