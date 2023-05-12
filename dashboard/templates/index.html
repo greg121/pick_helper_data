@@ -3,6 +3,62 @@
 <head>
     <title>Match Data Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        input {
+            background-color: #232323;
+            color: #f0f0f0;
+            border-color: #444;
+        }
+
+        .modal-content {
+            background-color: #232323;
+            color: #f0f0f0;
+        }
+
+        .modal-header {
+            border-bottom-color: #444;
+        }
+
+        .modal-footer {
+            border-top-color: #444;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .table {
+            color: #e0e0e0;
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
@@ -39,7 +95,7 @@
                         </button>
                         <div class="modal fade" id="buildOrderModal{{ match.match_id }}" tabindex="-1" role="dialog" aria-labelledby="buildOrderModalLabel{{ match.match_id }}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-scrollable" role="document">
-                                <div class="modal-content" style="background-color: #F5F5F5;">
+                                <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="buildOrderModalLabel{{ match.match_id }}">Build Order for Match {{ match.match_id }}</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
