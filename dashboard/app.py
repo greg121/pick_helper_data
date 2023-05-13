@@ -17,7 +17,8 @@ def index():
     return render_template('index.html', match_data=match_data)
 
 def is_valid_signature(secret_key, signature, payload):
-    expected_signature = hmac.new(secret_key, payload, hashlib.sha1).hexdigest()
+    key_bytes = secret_key.encode('utf-8')
+    expected_signature = hmac.new(key_bytes, payload, hashlib.sha1).hexdigest()
     return hmac.compare_digest(signature, 'sha1=' + expected_signature)
 
 @app.route('/update', methods=['POST'])
