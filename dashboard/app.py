@@ -18,6 +18,8 @@ def index():
 
 def is_valid_signature(secret_key, signature, payload):
     secret_key = secret_key.encode() # Convert secret_key to bytes
+    if isinstance(payload, str): # Check if payload is a string
+        payload = payload.encode() # Convert payload to bytes
     expected_signature = hmac.new(secret_key, payload, hashlib.sha1).hexdigest()
     return hmac.compare_digest(signature, 'sha1=' + expected_signature)
 
