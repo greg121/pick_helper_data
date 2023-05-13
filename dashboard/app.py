@@ -16,14 +16,9 @@ def index():
     g.match_data = match_data
     return render_template('index.html', match_data=match_data)
 
-def is_valid_signature(x_hub_signature, data, private_key):
-    # x_hub_signature and data are from the webhook payload
-    # private key is your webhook secret
-    hash_algorithm, github_signature = x_hub_signature.split('=', 1)
-    algorithm = hashlib.__dict__.get(hash_algorithm)
-    encoded_key = bytes(private_key, 'latin-1')
-    mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
-    return hmac.compare_digest(mac.hexdigest(), github_signature)
+def is_valid_signature(secret_key, signature, payload):
+    expected_signature = hmac.new(secret_key, payload, hashlib.sha1).hexdigest()
+    return hmac.compare_digest(signature, 'sha1=' + expected_signature)
 
 @app.route('/update', methods=['POST'])
 def webhook():
@@ -32,12 +27,14 @@ def webhook():
     w_secret = config.get('General', 'secret')
     if request.method == 'POST':
         x_hub_signature = request.headers.get('X-Hub-Signature')
-        #if is_valid_signature(x_hub_signature, request.data, w_secret):
-        repo = git.Repo('/home/greg121/lol_pick_helper')
-        origin = repo.remotes.origin
-        origin.pull()
-        return 'Updated PythonAnywhere successfully', 200
-        #return 'Signature wrong', 420
+        #TODO sicher machen
+        if is_valid_signature(x_hub_signature, request.data, w_secret):
+            repo = git.Repo('/home/greg121/lol_pick_helper')
+            origin = repo.remotes.origin
+            origin.pull()
+            return 'Updated PythonAnywhere successfully', 200
+        else:
+            return 'Invalid signature', 420
     else:
         return 'Wrong event type', 400
     
