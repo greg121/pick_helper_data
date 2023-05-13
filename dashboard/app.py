@@ -16,12 +16,14 @@ def index():
     g.match_data = match_data
     return render_template('index.html', match_data=match_data)
 
-def is_valid_signature(secret_key, signature, payload):
-    secret_key = secret_key.encode() # Convert secret_key to bytes
-    if isinstance(payload, str): # Check if payload is a string
-        payload = payload.encode() # Convert payload to bytes
-    expected_signature = hmac.new(secret_key, payload, hashlib.sha1).hexdigest()
-    return hmac.compare_digest(signature, 'sha1=' + expected_signature)
+def is_valid_signature(x_hub_signature, data, private_key):
+    # x_hub_signature and data are from the webhook payload
+    # private key is your webhook secret
+    hash_algorithm, github_signature = x_hub_signature.split('=', 1)
+    algorithm = hashlib.__dict__.get(hash_algorithm)
+    encoded_key = bytes(private_key, 'latin-1')
+    mac = hmac.new(encoded_key, msg=data, digestmod=algorithm)
+    return hmac.compare_digest(mac.hexdigest(), github_signature)
 
 @app.route('/update', methods=['POST'])
 def webhook():
