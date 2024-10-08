@@ -34,11 +34,13 @@ def main():
                     'own_champs': own_champs,
                     'enemy_champs': enemy_champs
                 }
-                match_history.append(match_data)
+                match_history.insert(0, match_data)
 
         # Write the updated match history data to the JSON file
         with open(file_path, 'w') as outfile:
             json.dump(match_history, outfile)
+        
+        
 
     except ApiError as e:
         if e.response.status_code == 429:
