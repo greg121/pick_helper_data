@@ -62,7 +62,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center my-5">Match Data Dashboard5</h1>
+        <h1 class="text-center my-5">Match Data Dashboard</h1>
         <input type="text" id="championSearch" placeholder="Search champions...">
         <table class="table table-striped">
             <thead>
@@ -125,7 +125,16 @@
                             </div>
                         </div>
                     </td>
-                    <td>{{ match.runes }}</td>
+                    <td>
+                        {% for rune in match.runes %}
+                            <img src="{{ rune.icon_url }}" 
+                                 alt="{{ rune.name }}" 
+                                 title="{{ rune.name }}" 
+                                 width="30" 
+                                 height="30" 
+                                 class="runeIcon">
+                        {% endfor %}
+                    </td>
                     <td class="ownChampsColumn">
                         {% for champ in match.own_champs %}
                             <img src="{{ champ.icon_url }}" alt="{{ champ.name }}" title="{{ champ.name }}" width="30" height="30" class="championName">

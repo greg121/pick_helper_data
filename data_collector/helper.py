@@ -1,12 +1,13 @@
 import requests
 from datetime import datetime
-from riotwatcher import LolWatcher
+from riotwatcher import LolWatcher, RiotWatcher
 import configparser
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 api_key = config.get('General', 'api_key')
 watcher = LolWatcher(api_key)
+riot_watcher = RiotWatcher(api_key)
 region = config.get('General', 'region')
 
 item_data = None
@@ -22,10 +23,11 @@ def get_basic_info():
     summoner_name = config.get('General', 'summoner_name')
     top_enemy = config.get('General', 'top_enemy')
     download_count = config.get('General', 'download_count')
+    tag_line = config.get('General', 'tag_line')
     # Get summoner details
-    summoner = watcher.summoner.by_name(region, summoner_name)
+    account = riot_watcher.account.by_riot_id(region, summoner_name, tag_line)
     # Get match history
-    matchlist = watcher.match.matchlist_by_puuid(region, summoner['puuid'], count=download_count)
+    matchlist = watcher.match.matchlist_by_puuid(region, account['puuid'], count=download_count)
     return summoner_name, top_enemy, matchlist
 
 
@@ -98,6 +100,24 @@ def get_rune_name(rune_id):
                 break
 
     return rune_name
+
+def get_rune_url(rune_id):
+    global rune_data
+
+    if rune_data is None:
+        rune_data = download_rune_data()
+
+    rune_url = None
+
+    if rune_data:
+        for rune_category in rune_data:
+            for rune in rune_category['slots']:
+                for inner_rune in rune['runes']:
+                    if inner_rune['id'] == rune_id:
+                        rune_url = f"https://ddragon.leagueoflegends.com/cdn/img/{inner_rune['icon']}"
+                        return rune_url
+
+    return rune_url
 
 
 def get_item_name(item_id):
@@ -244,10 +264,16 @@ def get_runes(match, participant_id):
 
     for participant in match['info']['participants']:
         if participant['participantId'] == participant_id:
-            if 'perks' in participant:  # Use the 'perks' key instead of 'runes'
+            if 'perks' in participant:
                 for rune in participant['perks']['styles']:
                     for perk in rune['selections']:
-                        runes.append(get_rune_name(perk['perk']))
+                        rune_id = perk['perk']
+                        rune_name = get_rune_name(rune_id)
+                        rune_url = get_rune_url(rune_id)
+                        runes.append({
+                            'name': rune_name,
+                            'icon_url': rune_url
+                        })
 
     return runes
 

@@ -5,7 +5,7 @@ import os
 import helper as h
 
 def main():
-    try:
+  #  try:
         summoner_name, top_enemy, matchlist = h.get_basic_info()
         match_history = []
 
@@ -42,13 +42,13 @@ def main():
         
         
 
-    except ApiError as e:
-        if e.response.status_code == 429:
-            print('Rate limit exceeded, try again later.')
-        elif e.response.status_code == 404:
-            print('Summoner not found.')
-        else:
-            print(f'An error occurred: {e.response.status_code}')
+    # except ApiError as e:
+    #     if e.response.status_code == 429:
+    #         print('Rate limit exceeded, try again later.')
+    #     elif e.response.status_code == 404:
+    #         print('Summoner not found.')
+    #     else:
+    #         print(f'An error occurred: {e.response.status_code}')
 
 if __name__ == "__main__":
     main()
