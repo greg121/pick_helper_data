@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data_collector/config.ini:/app/data_collector/config.ini
+      - ./data_collector/data:/app/data_collector/data
+    restart: unless-stopped 
